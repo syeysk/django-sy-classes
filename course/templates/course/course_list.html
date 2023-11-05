@@ -1,0 +1,60 @@
+{% extends 'template.html' %}
+{% load static %}
+
+{% block description %}Перечень бесплатных учебных курсов{% endblock %}
+{% block keywords %}{% endblock %}
+
+{% block title %}Учебные курсы{% endblock %}
+{% block page_title %}Учебные курсы{% endblock %}
+
+{% block start_of_head %}
+    <style>
+			.course {
+			    margin-bottom: 10px;
+			    border: 2px solid #c1ffda;
+			    border-radius: 6px;
+			}
+			.course > * {
+			    display: inline-block;
+			    /*height: 45px;*/
+			}
+			.course > *:first-child {
+			    width: calc(100% - 50px);
+			    padding: 15px 5px 18px 10px;
+			    position: relative;
+			    color: grey;
+			    text-decoration: none;
+			}
+			.course > *:last-child {
+			    width: 45px;
+			}
+			.course-progress-bar {
+			    position: absolute;
+			    bottom: 0;
+			    height: 4px;
+			    left: 0;
+			    width: 100%;
+			}
+		</style>
+{% endblock %}
+
+{% block content %}
+
+    {% if not courses %}
+        <p>Курсов пока нет</p>
+    {% endif %}
+
+		<div>
+				{% for course in courses %}
+			      <div class="course">
+							  <a href="{% url 'module_list' course.id %}">
+										<span class="course-title">{{ course.title }}</span>
+										<span class="course-progress-bar"></span>
+								</a>
+							  <div class="course-favorite-button">*</div>
+						</div>
+				{% endfor %}
+		</div>
+
+
+{% endblock %}

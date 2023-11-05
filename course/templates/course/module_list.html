@@ -1,0 +1,34 @@
+{% extends 'template.html' %}
+{% load static %}
+
+{% block description %}{% endblock %}
+{% block keywords %}{% endblock %}
+
+{% block title %}Курс "{{ course.title }}"{% endblock %}
+{% block page_title %}{{ course.title }} | Учебные модули{% endblock %}
+
+{% block start_of_head %}
+    <style>
+		</style>
+{% endblock %}
+
+{% block content %}
+
+    {% if not modules %}
+        <p>Модулей пока нет</p>
+    {% endif %}
+
+		<div>
+				{% for module in modules %}
+			      <div class="module">
+							  <div>
+										<a class="module-title" href="">Модуль {{ forloop.counter }}: {{ module.title }}</a>
+										<span class="module-progress-bar">100%</span>
+										<p class="module-description">{{ module.description }}</p>
+								</div>
+						</div>
+				{% endfor %}
+		</div>
+
+
+{% endblock %}

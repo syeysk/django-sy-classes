@@ -22,6 +22,7 @@ SITE_URL = env('SITE_URL')
 INTERNAL_IPS = ['127.0.0.1']
 CSRF_TRUSTED_ORIGINS = [SITE_URL]
 
+SALT = env('SALT')
 API_SALT = env('API_SALT')
 API_SECRET_KEY = env('API_SECRET_KEY')
 
@@ -39,6 +40,7 @@ INSTALLED_APPS = [
     'django_sy_framework.linker',
     'server',
     'pages',
+    'course',
 ]
 
 MIDDLEWARE = [
