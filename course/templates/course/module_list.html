@@ -22,7 +22,7 @@
 				{% for module in modules %}
 			      <div class="module">
 							  <div>
-										<a class="module-title" href="">Модуль {{ forloop.counter }}: {{ module.title }}</a>
+										<a class="module-title" href="{% url 'part_list' course.id module.id %}">Модуль {{ forloop.counter }}: {{ module.title }}</a>
 										<span class="module-progress-bar">100%</span>
 										<p class="module-description">{{ module.description }}</p>
 								</div>

@@ -1,0 +1,117 @@
+{% extends 'template.html' %}
+{% load static %}
+
+{% block description %}{% endblock %}
+{% block keywords %}{% endblock %}
+
+{% block title %}Курс "{{ module.course.title }}" - модуль "{{ module.title }}"{% endblock %}
+{% block page_title %}{{ module.course.title }} | {{ module.title }}{% endblock %}
+
+{% block start_of_head %}
+    <meta name="robots" content="noindex"/>
+    <style>
+		</style>
+{% endblock %}
+
+{% block content %}
+    <div id="app_exercise_id"></div>
+{% endblock %}
+
+{% block end_of_body %}
+    <script>
+			  PreloaderComponent = {
+			      props: ['modelValue', 'question'],
+			      emits: ['update:modelValue'],
+			      template: `
+			          preloader
+			      `,
+			  };
+    </script>
+
+    <script>
+			  ExerciseNewFactComponent = {
+			      props: ['modelValue', 'question'],
+			      emits: ['update:modelValue'],
+			      template: `
+			          <div>new fact</div>
+			      `,
+			  };
+    </script>
+
+    <script>
+			  ExerciseWriteAnswerComponent = {
+			      props: ['modelValue', 'question'],
+			      emits: ['update:modelValue'],
+			      template: `
+			          <div>write answer</div>
+			          <input type="text" value="write answer" name="answer">
+			      `,
+			  };
+    </script>
+
+    <script>
+			  ExerciseSelectAnswerComponent = {
+			      props: ['modelValue', 'question'],
+			      emits: ['update:modelValue'],
+			      template: `
+			          <div>select answer</div>
+			          <div>answer 1</div>
+			          <div>answer 2</div>
+			          <div>answer 3</div>
+			          <div>answer 4</div>
+			      `,
+			  };
+    </script>
+
+    <script>
+			  ExerciseLinkAnswersComponent = {
+			      props: ['modelValue', 'question'],
+			      emits: ['update:modelValue'],
+			      template: `
+			          <div>
+    			          <div>link answers left</div>
+    			          <div>link answers right</div>
+			          </div>
+			          <div>
+    			          <div>link answers left</div>
+    			          <div>link answers right</div>
+			          </div>
+			          <div>
+    			          <div>link answers left</div>
+    			          <div>link answers right</div>
+			          </div>
+			          <div>
+    			          <div>link answers left</div>
+    			          <div>link answers right</div>
+			          </div>
+			      `,
+			  };
+    </script>
+
+    <script>
+			  ExerciseApp = {
+			      components: {
+			          ExerciseNewFactComponent,
+			          ExerciseWriteAnswerComponent,
+			          ExerciseSelectAnswerComponent,
+			          ExerciseLinkAnswersComponent,
+			          PreloaderComponent,
+			      },
+			      data() {
+			          return {is_right: null, exercise_component: 'PreloaderComponent', answer: null, question: null};
+			      },
+			      template: `
+			          <component :is="exercise_component" v-model="answer"></component>
+			          <input type="button" value="Продолжить" v-if="is_right === true">
+			      `,
+			  }
+    </script>
+
+    <script>
+        const { createApp } = Vue;
+
+        var app_exercise = createApp(ExerciseApp);
+        app_exercise.config.compilerOptions.delimiters = [ '[[', ']]' ];
+        app_exercise.mount('#app_exercise_id');
+    </script>
+{% endblock %}
