@@ -1,7 +1,10 @@
+from secrets import choice
+
+from django.db.models import F
 from django.views import View
 from django.shortcuts import render, get_object_or_404
 
-from course.models import Course, Module
+from course.models import Course, Exercise, Module, Part
 
 
 class CoursesView(View):
@@ -49,5 +52,21 @@ class PartsView(View):
 
 class ExerciseView(View):
     def get(self, request, part_id, lesson_number):
-        context = {}
+        part = get_object_or_404(Part, pk=part_id)
+
+        components = ['NewFact', 'WriteAnswer', 'SelectAnswer']#, 'LinkAnswers']
+        exercises = Exercise.objects.filter(part_id=part_id, lesson_number=lesson_number)
+        exercises_list = list(exercises.values(question=F('relation__title'), answer=F('relation__answer')))
+        for exercise in exercises_list:
+            component = exercise.setdefault('component', choice(components))
+            data = exercise.setdefault('data', {})
+            if component == 'NewFact':
+                data['answer'] = exercise['answer']
+            elif component == 'SelectAnswer':
+                data['options'] = ['fall answer', 'any 2', exercise['answer'], 'fall yet']
+
+        context = {
+            'exercises': exercises_list,
+            'module': part.module,
+        }
         return render(request, 'course/exercise.html', context)

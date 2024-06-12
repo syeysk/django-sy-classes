@@ -11,6 +11,12 @@
     <meta name="robots" content="noindex"/>
     <style>
 		</style>
+    {% if debug %}
+        <script src="{% static 'base/extern/vue.3.js' %}"></script>
+    {% else %}
+        <script src="{% static 'base/extern/vue.3.prod.js' %}"></script>
+    {% endif %}
+    {{ exercises|json_script:'exercises_json' }}
 {% endblock %}
 
 {% block content %}
@@ -20,7 +26,7 @@
 {% block end_of_body %}
     <script>
 			  PreloaderComponent = {
-			      props: ['modelValue', 'question'],
+			      props: ['question', 'data'],
 			      emits: ['update:modelValue'],
 			      template: `
 			          preloader
@@ -30,43 +36,52 @@
 
     <script>
 			  ExerciseNewFactComponent = {
-			      props: ['modelValue', 'question'],
-			      emits: ['update:modelValue'],
+			      props: ['question', 'data'],
+			      inject: ['check_answer'],
+			      mounted() {
+			          this.check_answer(this.answer);
+			      },
 			      template: `
-			          <div>new fact</div>
+			          <div>Запомните</div>
+			          <br>
+			          <div>[[ question ]]</div>
+			          <div>Ответ: [[ data.answer ]]</div>
 			      `,
 			  };
     </script>
 
     <script>
 			  ExerciseWriteAnswerComponent = {
-			      props: ['modelValue', 'question'],
-			      emits: ['update:modelValue'],
+			      props: ['question', 'data'],
+			      inject: ['check_answer', 'is_right'],
+			      data() {
+			          return {answer: ''};
+			      },
 			      template: `
-			          <div>write answer</div>
-			          <input type="text" value="write answer" name="answer">
+			          <div>[[ question ]]</div>
+			          <input type="text" v-model="answer" name="answer">
+			          <br>
+			          <input v-if="answer && is_right !== true" type="button" value="Проверить" @click="check_answer(answer)">
 			      `,
 			  };
     </script>
 
     <script>
 			  ExerciseSelectAnswerComponent = {
-			      props: ['modelValue', 'question'],
-			      emits: ['update:modelValue'],
+			      props: ['question', 'data'],
+			      inject: ['check_answer'],
 			      template: `
-			          <div>select answer</div>
-			          <div>answer 1</div>
-			          <div>answer 2</div>
-			          <div>answer 3</div>
-			          <div>answer 4</div>
+			          <div>Выберите ответ</div>
+			          <br>
+			          <div v-for="option in data.options" @click="check_answer(option)" style="cursor: pointer;">[[ option ]]</div>
 			      `,
 			  };
     </script>
 
     <script>
 			  ExerciseLinkAnswersComponent = {
-			      props: ['modelValue', 'question'],
-			      emits: ['update:modelValue'],
+			      props: ['question', 'data'],
+			      inject: ['check_answer'],
 			      template: `
 			          <div>
     			          <div>link answers left</div>
@@ -98,11 +113,57 @@
 			          PreloaderComponent,
 			      },
 			      data() {
-			          return {is_right: null, exercise_component: 'PreloaderComponent', answer: null, question: null};
+			          return {
+    			          exercises: JSON.parse(document.getElementById('exercises_json').textContent),
+			              is_right: null,
+			              current_exercise: 0,
+			              is_finished: false,
+			          };
+			      },
+			      provide() {
+			          return {
+			              check_answer: this.check_answer,
+			              is_right: this.is_right,
+			          };
+			      },
+			      computed: {
+			          question() {
+			             return this.exercises[this.current_exercise].question
+			          },
+			          answer() {
+			             return this.exercises[this.current_exercise].answer
+			          },
+			          data() {
+			             return this.exercises[this.current_exercise].data
+			          },
+			          component() {
+			             return this.exercises[this.current_exercise].component
+			          },
+			      },
+			      methods: {
+			          check_answer(answer) {
+			              this.is_right = answer == this.answer;
+			          },
+			          go_to_the_next_question() {
+			              if (this.current_exercise < this.exercises.length - 1) {
+    			              this.current_exercise += 1;
+    			          } else {
+    			              this.is_finished = true;
+    			          }
+    			          this.is_right = null;
+			          }
 			      },
 			      template: `
-			          <component :is="exercise_component" v-model="answer"></component>
-			          <input type="button" value="Продолжить" v-if="is_right === true">
+			          <component :is="'Exercise'+component+'Component'" :question="question" :data="data"></component>
+			          <br>
+			          <span v-if="is_right === false && is_right !== null">Неправильно</span>
+			          <span v-if="is_right === true && component != 'NewFact'">Верно</span>
+			          <div v-if="!is_finished">
+			              <input type="button" value="Продолжить" v-if="is_right === true" @click="go_to_the_next_question">
+			          </div>
+			          <div v-else>
+			              Завершено
+			          </div>
 			      `,
 			  }
     </script>

@@ -59,7 +59,7 @@ class Exercise(models.Model):
     relation = models.ForeignKey(
         Relation,
         on_delete=models.CASCADE,
-        related_name='relations',
+        related_name='exercises',
         verbose_name='Изучаемый факт',
     )
 
