@@ -133,7 +133,6 @@ EXTERN_AUTH = {
     }
 }
 MICROSERVICES_TOKENS = {
-    'to_auth': env('MICROSERVICE_TOKEN_TO_AUTH'),
 }
 MICROSERVICES_URLS = {
     'auth': env('MICROSERVICE_URL_AUTH'),
