@@ -4,31 +4,55 @@
 {% block description %}{% endblock %}
 {% block keywords %}{% endblock %}
 
-{% block title %}Курс "{{ course.title }}"{% endblock %}
+{% block title %}{% endblock %}
 {% block page_title %}{{ course.title }} | Учебные модули{% endblock %}
 
 {% block start_of_head %}
     <style>
-		</style>
+        h1 {
+            margin-bottom: 0 !important;
+        }
+        .course-header {
+            background-color: #6e2e2f;
+            color: white;
+            padding: 15px 5px 18px 10px;
+            text-align: center;
+            font-size: 1.4em;
+        }
+        .module-title {
+            background-color: #4b5c6e;
+            color: white;
+            padding: 15px 5px 18px 10px;
+            width: calc(100% - 50px);
+            display: inline-block;
+        }
+        .module-progress-bar {
+            width: 50px;
+        }
+    </style>
 {% endblock %}
 
 {% block content %}
+    <div class="course-header" title="Курс">
+        <a href="{% url 'course_list' %}" style="float: left; color: white; text-decoration: none;"> &lt;&lt; </a>
+        {{ course.title }}
+    </div>
 
     {% if not modules %}
         <p>Модулей пока нет</p>
     {% endif %}
 
-		<div>
-				{% for module in modules %}
-			      <div class="module">
-							  <div>
-										<a class="module-title" href="{% url 'part_list' course.id module.id %}">Модуль {{ forloop.counter }}: {{ module.title }}</a>
-										<span class="module-progress-bar">100%</span>
-										<p class="module-description">{{ module.description }}</p>
-								</div>
-						</div>
-				{% endfor %}
-		</div>
+    <br>
+    {% for module in modules %}
+        <div class="module">
+            <a class="module-title" href="{% url 'part_list' course.id module.id %}">Модуль {{ forloop.counter }}: {{ module.title }}</a>
+            <span class="module-progress-bar">100%</span>
+            <br><br>
+            <p class="module-description">{{ module.description }}</p>
+        </div>
+        <br>
+    {% endfor %}
+
 
 
 {% endblock %}

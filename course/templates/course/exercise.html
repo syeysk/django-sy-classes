@@ -4,13 +4,65 @@
 {% block description %}{% endblock %}
 {% block keywords %}{% endblock %}
 
-{% block title %}Курс "{{ module.course.title }}" - модуль "{{ module.title }}"{% endblock %}
+{% block title %}{% endblock %}
 {% block page_title %}{{ module.course.title }} | {{ module.title }}{% endblock %}
 
 {% block start_of_head %}
     <meta name="robots" content="noindex"/>
     <style>
-		</style>
+        h1 {
+            margin-bottom: 0 !important;
+        }
+        .course-block {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+        }
+        .course-block a {
+            padding: 1.2em 1.1em;
+            text-decoration: none;
+            display: block;
+        }
+
+        /* Component "ExerciseApp" */
+
+        .result {
+            padding: 10px 0;
+            width: 100%;
+            border: 2px solid;
+            font-weight: 700;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .result-incorrect {
+            border-color: red;
+            color: red;
+        }
+        .result-correct {
+            border-color: green;
+            color: green;
+        }
+        .button-next {
+            padding: 10px 0;
+            width: 100%;
+            font-weight: 700;
+            color: white;
+            background-color: blue;
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
+        }
+        .button-finished {
+            padding: 10px 0;
+            width: 100%;
+            font-weight: 700;
+            color: white;
+            background-color: forestgreen;
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
+        }
+    </style>
     {% if debug %}
         <script src="{% static 'base/extern/vue.3.js' %}"></script>
     {% else %}
@@ -20,152 +72,183 @@
 {% endblock %}
 
 {% block content %}
+    <div class="course-block">
+        <a href="{% url 'module_list' module.course.pk %}" title="Курс" style="background-color: #6e2e2f; color: white;">{{ module.course.title }}</a>
+        <a href="{% url 'part_list' module.course.pk module.pk %}" title="Модуль" style="background-color: #4b5c6e; color: white;">{{ module.title }}</a>
+        <a title="Раздел" style="background-color: #bfb5ae;">{{ part.title }}</a>
+    </div>
+    <br>
     <div id="app_exercise_id"></div>
 {% endblock %}
 
 {% block end_of_body %}
     <script>
-			  PreloaderComponent = {
-			      props: ['question', 'data'],
-			      emits: ['update:modelValue'],
-			      template: `
-			          preloader
-			      `,
-			  };
+        PreloaderComponent = {
+            props: ['question', 'data'],
+            emits: ['update:modelValue'],
+            template: `
+                preloader
+            `,
+        };
     </script>
 
     <script>
-			  ExerciseNewFactComponent = {
-			      props: ['question', 'data'],
-			      inject: ['check_answer'],
-			      mounted() {
-			          this.check_answer(this.answer);
-			      },
-			      template: `
-			          <div>Запомните</div>
-			          <br>
-			          <div>[[ question ]]</div>
-			          <div>Ответ: [[ data.answer ]]</div>
-			      `,
-			  };
+        ExerciseNewFactComponent = {
+            props: ['question', 'data'],
+            inject: ['check_answer'],
+            mounted() {
+                this.check_answer(this.data.answer);
+            },
+            template: `
+                <div><b>Запомните</b></div>
+                <br>
+                <div>[[ question ]]: <i>[[ data.answer ]]</i></div>
+            `,
+        };
     </script>
 
     <script>
-			  ExerciseWriteAnswerComponent = {
-			      props: ['question', 'data'],
-			      inject: ['check_answer', 'is_right'],
-			      data() {
-			          return {answer: ''};
-			      },
-			      template: `
-			          <div>[[ question ]]</div>
-			          <input type="text" v-model="answer" name="answer">
-			          <br>
-			          <input v-if="answer && is_right !== true" type="button" value="Проверить" @click="check_answer(answer)">
-			      `,
-			  };
+        ExerciseWriteAnswerComponent = {
+            props: ['question', 'data'],
+            inject: ['check_answer', 'is_right'],
+            data() {
+                return {answer: ''};
+            },
+            template: `
+                <div style="font-size: 1.2em;">[[ question ]]?</div>
+                <input type="text" v-model="answer" name="answer" placeholder="Введите ответ">
+                <br>
+                <input v-if="answer && is_right !== true" type="button" value="Проверить" @click="check_answer(answer)">
+            `,
+        };
     </script>
 
     <script>
-			  ExerciseSelectAnswerComponent = {
-			      props: ['question', 'data'],
-			      inject: ['check_answer'],
-			      template: `
-			          <div>Выберите ответ</div>
-			          <br>
-			          <div v-for="option in data.options" @click="check_answer(option)" style="cursor: pointer;">[[ option ]]</div>
-			      `,
-			  };
+        ExerciseSelectAnswerComponent = {
+            props: ['question', 'data'],
+            inject: ['check_answer'],
+            data() {
+                return {key_of_answer: null};
+            },
+            methods: {
+                try_check_answer(answer, key) {
+                    if (this.check_answer(answer)) {
+                        this.key_of_answer = key;
+                    }
+                }
+            },
+            template: `
+                <div><b>Выберите ответ</b></div>
+                <br>
+                <div>[[question]]:</div>
+                <br>
+                <div v-for="(option, key) in data.options" @click="try_check_answer(option, key)" :key="key" style="cursor: pointer; margin-top: 7px;">
+                    <input type="radio"> <i :style="'color: ' + (key_of_answer !== null ? (key_of_answer === key ? 'black; font-weight: 600' : 'grey') : 'black') + ';'">[[ option ]]</i>
+                </div>
+            `,
+        };
     </script>
 
     <script>
-			  ExerciseLinkAnswersComponent = {
-			      props: ['question', 'data'],
-			      inject: ['check_answer'],
-			      template: `
-			          <div>
-    			          <div>link answers left</div>
-    			          <div>link answers right</div>
-			          </div>
-			          <div>
-    			          <div>link answers left</div>
-    			          <div>link answers right</div>
-			          </div>
-			          <div>
-    			          <div>link answers left</div>
-    			          <div>link answers right</div>
-			          </div>
-			          <div>
-    			          <div>link answers left</div>
-    			          <div>link answers right</div>
-			          </div>
-			      `,
-			  };
+        ExerciseLinkAnswersComponent = {
+            props: ['question', 'data'],
+            inject: ['check_answer'],
+            template: `
+                <div>
+                    <div>link answers left</div>
+                    <div>link answers right</div>
+                </div>
+                <div>
+                    <div>link answers left</div>
+                    <div>link answers right</div>
+                </div>
+                <div>
+                    <div>link answers left</div>
+                    <div>link answers right</div>
+                </div>
+                <div>
+                    <div>link answers left</div>
+                    <div>link answers right</div>
+                </div>
+            `,
+        };
     </script>
 
     <script>
-			  ExerciseApp = {
-			      components: {
-			          ExerciseNewFactComponent,
-			          ExerciseWriteAnswerComponent,
-			          ExerciseSelectAnswerComponent,
-			          ExerciseLinkAnswersComponent,
-			          PreloaderComponent,
-			      },
-			      data() {
-			          return {
-    			          exercises: JSON.parse(document.getElementById('exercises_json').textContent),
-			              is_right: null,
-			              current_exercise: 0,
-			              is_finished: false,
-			          };
-			      },
-			      provide() {
-			          return {
-			              check_answer: this.check_answer,
-			              is_right: this.is_right,
-			          };
-			      },
-			      computed: {
-			          question() {
-			             return this.exercises[this.current_exercise].question
-			          },
-			          answer() {
-			             return this.exercises[this.current_exercise].answer
-			          },
-			          data() {
-			             return this.exercises[this.current_exercise].data
-			          },
-			          component() {
-			             return this.exercises[this.current_exercise].component
-			          },
-			      },
-			      methods: {
-			          check_answer(answer) {
-			              this.is_right = answer == this.answer;
-			          },
-			          go_to_the_next_question() {
-			              if (this.current_exercise < this.exercises.length - 1) {
-    			              this.current_exercise += 1;
-    			          } else {
-    			              this.is_finished = true;
-    			          }
-    			          this.is_right = null;
-			          }
-			      },
-			      template: `
-			          <component :is="'Exercise'+component+'Component'" :question="question" :data="data"></component>
-			          <br>
-			          <span v-if="is_right === false && is_right !== null">Неправильно</span>
-			          <span v-if="is_right === true && component != 'NewFact'">Верно</span>
-			          <div v-if="!is_finished">
-			              <input type="button" value="Продолжить" v-if="is_right === true" @click="go_to_the_next_question">
-			          </div>
-			          <div v-else>
-			              Завершено
-			          </div>
-			      `,
-			  }
+        ExerciseApp = {
+            components: {
+                ExerciseNewFactComponent,
+                ExerciseWriteAnswerComponent,
+                ExerciseSelectAnswerComponent,
+                ExerciseLinkAnswersComponent,
+                PreloaderComponent,
+            },
+            data() {
+                return {
+                    exercises: JSON.parse(document.getElementById('exercises_json').textContent),
+                    is_right: null,
+                    current_exercise: 0,
+                    is_finished: false,
+                    need_component: true,
+                };
+            },
+            provide() {
+                return {
+                    check_answer: this.check_answer,
+                    is_right: this.is_right,
+                };
+            },
+            computed: {
+                question() {
+                   return this.exercises[this.current_exercise].question
+                },
+                answer() {
+                   return this.exercises[this.current_exercise].answer
+                },
+                data() {
+                   return this.exercises[this.current_exercise].data
+                },
+                component() {
+                   return this.exercises[this.current_exercise].component
+                },
+            },
+            methods: {
+                check_answer(answer) {
+                    this.is_right = answer == this.answer;
+                    return this.is_right;
+                },
+                go_to_the_next_question() {
+                    this.is_right = null;
+                    if (this.current_exercise < this.exercises.length - 1) {
+                        this.need_component = false;
+                        this.current_exercise += 1;
+                        let self = this;
+                        setTimeout(function() {self.need_component = true;}, 1);
+                    } else {
+                        this.is_finished = true;
+                    }
+                },
+            },
+            template: `
+                <div style="display: flex; flex-direction: row; justify-content: center;">
+                    <div v-for="(e, key) in exercises" :style="'width: 100%; height: 5px; ' + (key < current_exercise || is_finished? 'background-color: forestgreen;' : '')"></div>
+                </div>
+                <br>
+                <div :style="is_finished ? 'opacity: 0.6;' : ''">
+                    <component v-if="need_component" :is="'Exercise'+component+'Component'" :question="question" :data="data"></component>
+                </div>
+                <br><br>
+                <div v-if="is_right === false && is_right !== null" class="result result-incorrect">Неправильно!</div>
+                <div v-if="is_right === true && component != 'NewFact'" class="result result-correct">Верно!</div>
+                <br>
+                <template v-if="!is_finished">
+                    <div class="button-next" v-if="is_right === true" @click="go_to_the_next_question();">Продолжить</div>
+                </template>
+                <div v-else class="button-finished">
+                    Завершено
+                </div>
+            `,
+        }
     </script>
 
     <script>

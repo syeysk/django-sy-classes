@@ -4,67 +4,85 @@
 {% block description %}{% endblock %}
 {% block keywords %}{% endblock %}
 
-{% block title %}Курс "{{ module.course.title }}" - модуль "{{ module.title }}"{% endblock %}
+{% block title %}{% endblock %}
 {% block page_title %}{{ module.course.title }} | {{ module.title }}{% endblock %}
 
 {% block start_of_head %}
     <style>
-			  .part {
-			      margin: 10px 0;
-			  }
-			  .part
-			  .part-header {
-			      padding: 10px 0 10px 7px;
-			      background: #634862;
-			      color: white;
-			  }
-			  .part-header > div {
-			      display: inline-block;
-			  }
-			  .part-title {
-			      width: calc(100% - 50px);
-			  }
-			  .part-description-link {
-			      width: 45px;
-			      cursor: pointer;
-			  }
-			  .part-lessons {
-			      padding: 20px 10px;
-			  }
-			  .part-lesson {
-			      padding: 15px 10px;
-			      background: grey;
-			      margin: 10px;
-			      border-radius: 20px;
-			      display: inline-block;
-			      cursor: pointer;
-			      text-decoration: none;
-			      color: white;
-			  }
-		</style>
+        h1 {
+            margin-bottom: 0 !important;
+        }
+        .part {
+            margin: 10px 0;
+        }
+        .part
+        .part-header {
+            padding: 10px 0 10px 7px;
+            background: #634862;
+            color: white;
+        }
+        .part-header > div {
+            display: inline-block;
+        }
+        .part-title {
+            width: calc(100% - 50px);
+        }
+        .part-description-link {
+            width: 45px;
+            cursor: pointer;
+        }
+        .part-lessons {
+            padding: 20px 10px;
+        }
+        .part-lesson {
+            padding: 15px 10px;
+            background: grey;
+            margin: 10px;
+            border-radius: 20px;
+            display: inline-block;
+            cursor: pointer;
+            text-decoration: none;
+            color: white;
+        }
+
+        .course-block {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+        }
+        .course-block a {
+            padding: 1.2em 1.1em;
+            text-decoration: none;
+        }
+    </style>
 {% endblock %}
 
 {% block content %}
+
+    <div class="course-block">
+        <a href="{% url 'module_list' module.course.pk %}" title="Курс" style="background-color: #6e2e2f; color: white;">{{ module.course.title }}</a>
+        <a title="Модуль" style="background-color: #4b5c6e; color: white;">{{ module.title }}</a>
+    </div>
 
     {% if not parts %}
         <p>Разделов пока нет</p>
     {% endif %}
 
-		<div>
-				{% for part in parts %}
-			      <div class="part">
-							  <div class="part-header">
-										<div class="part-title">Раздел {{ forloop.counter }}: {{ part.title }}</div>
-										<div class="part-description-link">Теория</div>
-								</div>
-							  <div class="part-lessons">
-									  {% for lesson in part.lessons %}
-									      <a class="part-lesson" href="{% url 'exercise' part.id forloop.counter %}" rel="nofollow">1 из {{ lesson|length }}</a>
-									  {% endfor %}
-								</div>
-						</div>
-				{% endfor %}
-		</div>
+    <div>
+        {% for part in parts %}
+            <div class="part">
+                <div class="part-header">
+                    <div class="part-title">Раздел {{ forloop.counter }}: {{ part.title }}</div>
+                    <div class="part-description-link">Теория</div>
+                </div>
+                <div class="part-lessons">
+                    {% for lesson in part.lessons %}
+                        <a class="part-lesson" href="{% url 'exercise' part.id forloop.counter %}" rel="nofollow">1 из {{ lesson|length }}</a>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
 
 
 {% endblock %}

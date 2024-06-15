@@ -68,5 +68,6 @@ class ExerciseView(View):
         context = {
             'exercises': exercises_list,
             'module': part.module,
+            'part': part,
         }
         return render(request, 'course/exercise.html', context)
