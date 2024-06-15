@@ -1,0 +1,10 @@
+.git
+.github
+ROADMAP*
+README.md
+INSTALL*.md
+LICENSE
+CONTRIBUTING.md
+*.db
+*.log
+devvue

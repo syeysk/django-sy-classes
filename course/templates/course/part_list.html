@@ -15,7 +15,6 @@
         .part {
             margin: 10px 0;
         }
-        .part
         .part-header {
             padding: 10px 0 10px 7px;
             background: #634862;
@@ -47,11 +46,11 @@
 
         .course-block {
             display: flex;
-            flex-direction: row;
+            flex-direction: column;
             justify-content: center;
         }
         .course-block a {
-            padding: 1.2em 1.1em;
+            padding: 0.3em 1.1em;
             text-decoration: none;
         }
     </style>
@@ -60,8 +59,8 @@
 {% block content %}
 
     <div class="course-block">
-        <a href="{% url 'module_list' module.course.pk %}" title="Курс" style="background-color: #6e2e2f; color: white;">{{ module.course.title }}</a>
-        <a title="Модуль" style="background-color: #4b5c6e; color: white;">{{ module.title }}</a>
+        <a href="{% url 'module_list' module.course.pk %}" title="Курс" style="background-color: #6e2e2f; color: white; ">{{ module.course.title }}</a>
+        <a title="Модуль" style="background-color: #4b5c6e; color: white; padding: 15px 5px 18px 10px; text-align: center; font-size: 1.4em;">{{ module.title }}</a>
     </div>
 
     {% if not parts %}

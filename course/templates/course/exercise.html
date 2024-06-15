@@ -15,11 +15,11 @@
         }
         .course-block {
             display: flex;
-            flex-direction: row;
+            flex-direction: column;
             justify-content: center;
         }
         .course-block a {
-            padding: 1.2em 1.1em;
+            padding: 0.3em 1.1em;
             text-decoration: none;
             display: block;
         }
@@ -73,9 +73,9 @@
 
 {% block content %}
     <div class="course-block">
-        <a href="{% url 'module_list' module.course.pk %}" title="Курс" style="background-color: #6e2e2f; color: white;">{{ module.course.title }}</a>
+        <!--<a href="{% url 'module_list' module.course.pk %}" title="Курс" style="background-color: #6e2e2f; color: white;">{{ module.course.title }}</a>-->
         <a href="{% url 'part_list' module.course.pk module.pk %}" title="Модуль" style="background-color: #4b5c6e; color: white;">{{ module.title }}</a>
-        <a title="Раздел" style="background-color: #bfb5ae;">{{ part.title }}</a>
+        <!--<a title="Раздел" style="background-color: #bfb5ae;">{{ part.title }}</a>-->
     </div>
     <br>
     <div id="app_exercise_id"></div>
@@ -211,6 +211,9 @@
                 component() {
                    return this.exercises[this.current_exercise].component
                 },
+                source() {
+                   return this.exercises[this.current_exercise].source
+                },
             },
             methods: {
                 check_answer(answer) {
@@ -244,9 +247,10 @@
                 <template v-if="!is_finished">
                     <div class="button-next" v-if="is_right === true" @click="go_to_the_next_question();">Продолжить</div>
                 </template>
-                <div v-else class="button-finished">
+                <a v-else class="button-finished" href="{% url 'part_list' module.course.pk module.pk %}" style="text-decoration: none; display: block;">
                     Завершено
-                </div>
+                </a>
+                <span :title="source" style="float: right;">Источник</span>
             `,
         }
     </script>

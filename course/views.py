@@ -56,7 +56,13 @@ class ExerciseView(View):
 
         components = ['NewFact', 'WriteAnswer', 'SelectAnswer']#, 'LinkAnswers']
         exercises = Exercise.objects.filter(part_id=part_id, lesson_number=lesson_number)
-        exercises_list = list(exercises.values(question=F('relation__title'), answer=F('relation__answer')))
+        exercises_list = list(
+            exercises.values(
+                question=F('relation__title'),
+                answer=F('relation__answer'),
+                source=F('relation__source'),
+            ),
+        )
         for exercise in exercises_list:
             component = exercise.setdefault('component', choice(components))
             data = exercise.setdefault('data', {})

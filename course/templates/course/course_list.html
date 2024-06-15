@@ -1,23 +1,20 @@
 {% extends 'template.html' %}
 {% load static %}
 
-{% block description %}Перечень бесплатных учебных курсов{% endblock %}
+{% block description %}Перечень бесплатных учебных тестов{% endblock %}
 {% block keywords %}{% endblock %}
 
-{% block title %}Выберите курс{% endblock %}
-{% block page_title %}Учебные курсы{% endblock %}
+{% block title %}Что будем зубрить?{% endblock %}
+{% block page_title %}Бесплатные тесты для зубрёжки{% endblock %}
 
 {% block start_of_head %}
     <style>
       .course {
           margin-bottom: 10px;
-          /*border: 2px solid #c1ffda;*/
-          /*border-radius: 6px;*/
           background-color: #6e2e2f;
       }
       .course > * {
           display: inline-block;
-          /*height: 45px;*/
       }
       .course > *:first-child {
           width: calc(100% - 50px);
