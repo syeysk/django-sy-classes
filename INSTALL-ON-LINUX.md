@@ -6,7 +6,11 @@
 git clone https://github.com/syeysk/django-sy-classes && cd django-sy-classes
 ```
 
-Заполните переменные окружения, добавив и заполнив файл `.env`
+Заполните переменные окружения, добавив и заполнив файл `.env`:
+```sh
+cp example.env .env
+```
+
 
 Соберите образ и запустите контейнер:
 
