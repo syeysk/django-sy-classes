@@ -24,7 +24,7 @@ docker-compose -f docker-compose.yml up -d --build
 
 ## Настройте Nginx + Debian для глобального доступа
 
-Создайте файл `/etc/nginx/conf.d/classes.intera.space` и запишите в него настройки для Nginx:
+Создайте файл `/etc/nginx/conf.d/classes.intera.space.conf` и запишите в него настройки для Nginx:
 
 ```
 server {
