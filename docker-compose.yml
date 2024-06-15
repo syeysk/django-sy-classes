@@ -5,7 +5,6 @@ services:
 
   sy-classes:
     build: .
-    container_name: 'sy-classes'
     command: >
        bash -c "python3 manage.py migrate
        && python3 manage.py collectstatic --noinput
