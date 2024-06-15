@@ -3,7 +3,7 @@
 Скачайте репозиторий:
 
 ```sh
-git clone https://github.com/syeysk/django-sy-classes && cd django-sy-classes && git checkout dev
+git clone https://github.com/syeysk/django-sy-classes && cd django-sy-classes
 ```
 
 Заполните переменные окружения, добавив и заполнив файл `.env`

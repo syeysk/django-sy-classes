@@ -3,7 +3,7 @@ version: '3'
 
 services:
 
-  platform:
+  sy-classes:
     build: .
     container_name: 'sy-classes'
     command: >
@@ -14,4 +14,4 @@ services:
       - "8006:8000"
     volumes:
       - .:/app
-      - /usr/share/nginx/html/django-sy-facilitation/static:/static
+      - /usr/share/nginx/html/django-sy-classes/static:/static
